@@ -26,6 +26,7 @@ public:
     struct Settings {
         QString name;
         qint32 baudRate;
+        qint32 dtrOnTime;
         QString stringBaudRate;
         QSerialPort::DataBits dataBits;
         QString stringDataBits;
@@ -35,6 +36,9 @@ public:
         QString stringStopBits;
         QSerialPort::FlowControl flowControl;
         QString stringFlowControl;
+        QString stringTimeType;
+        bool dtrEnabled;
+        bool rtsEnabled;
         bool localEchoEnabled;
     };
 
@@ -48,6 +52,8 @@ private slots:
     void apply();
     void checkCustomBaudRatePolicy(int idx);
     void checkCustomDevicePathPolicy(int idx);
+
+    void on_dtrBox_stateChanged();
 
 private:
     void fillPortsParameters();

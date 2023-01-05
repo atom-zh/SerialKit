@@ -20,6 +20,7 @@ qt_add_executable(terminal
     main.cpp
     mainwindow.cpp mainwindow.h mainwindow.ui
     settingsdialog.cpp settingsdialog.h settingsdialog.ui
+    thread.h thread.cpp
 )
 
 set_target_properties(terminal PROPERTIES

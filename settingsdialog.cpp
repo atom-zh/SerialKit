@@ -9,7 +9,13 @@
 #include <QLineEdit>
 #include <QSerialPortInfo>
 
+#include <QTextStream>
+#include <stdio.h>
+
 static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
+QTextStream cin(stdin,  QIODevice::ReadOnly);
+QTextStream cout(stdout,  QIODevice::WriteOnly);
+QTextStream cerr(stderr,  QIODevice::WriteOnly);
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),
@@ -115,6 +121,9 @@ void SettingsDialog::fillPortsParameters()
     m_ui->flowControlBox->addItem(tr("None"), QSerialPort::NoFlowControl);
     m_ui->flowControlBox->addItem(tr("RTS/CTS"), QSerialPort::HardwareControl);
     m_ui->flowControlBox->addItem(tr("XON/XOFF"), QSerialPort::SoftwareControl);
+
+    m_ui->dtrTimeTypeBox->addItem(QStringLiteral("ms"), QSerialPort::time_ms);
+    m_ui->dtrTimeTypeBox->addItem(QStringLiteral("s"), QSerialPort::time_S);
 }
 
 void SettingsDialog::fillPortsInfo()
@@ -173,4 +182,18 @@ void SettingsDialog::updateSettings()
     m_currentSettings.stringFlowControl = m_ui->flowControlBox->currentText();
 
     m_currentSettings.localEchoEnabled = m_ui->localEchoCheckBox->isChecked();
+}
+
+void SettingsDialog::on_dtrBox_stateChanged()
+{
+    if(m_ui->dtrBox->checkState()) {
+        m_currentSettings.dtrEnabled = true;
+
+        m_currentSettings.stringTimeType = m_ui->dtrTimeTypeBox->currentText();;
+        m_currentSettings.dtrOnTime = m_ui->dtrOnTimeBox->value();
+        cout<<"DTR open. on time: "<<m_currentSettings.dtrOnTime<<m_currentSettings.stringTimeType<<Qt::endl;
+    } else {
+        m_currentSettings.dtrEnabled = false;
+        cout<<"DTR close."<<Qt::endl;
+    }
 }

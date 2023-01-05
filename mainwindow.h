@@ -7,6 +7,7 @@
 
 #include <QMainWindow>
 #include <QSerialPort>
+#include "thread.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -35,6 +36,7 @@ private slots:
     void about();
     void writeData(const QByteArray &data);
     void readData();
+    void dtrCtrl(bool opt);
 
     void handleError(QSerialPort::SerialPortError error);
 
@@ -49,6 +51,7 @@ private:
     Console *m_console = nullptr;
     SettingsDialog *m_settings = nullptr;
     QSerialPort *m_serial = nullptr;
+    DTRThread *task;
 };
 
 #endif // MAINWINDOW_H

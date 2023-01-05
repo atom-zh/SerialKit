@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui(new Ui::MainWindow),
     m_status(new QLabel),
     m_console(new Console),
-      m_settings(new SettingsDialog(this)),
+    m_settings(new SettingsDialog(this)),
 //! [1]
     m_serial(new QSerialPort(this))
 //! [1]
@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //! [2]
     connect(m_console, &Console::getData, this, &MainWindow::writeData);
 //! [3]
+    task = new DTRThread(NULL);
 }
 //! [3]
 
@@ -75,12 +76,16 @@ void MainWindow::openSerialPort()
 
         showStatusMessage(tr("Open error"));
     }
+    task->start();
 }
 //! [4]
 
 //! [5]
 void MainWindow::closeSerialPort()
 {
+    task->stop();
+    task->quit();
+    task->wait();
     if (m_serial->isOpen())
         m_serial->close();
     m_console->setEnabled(false);
@@ -111,6 +116,7 @@ void MainWindow::readData()
 {
     const QByteArray data = m_serial->readAll();
     m_console->putData(data);
+    //m_serial->setDataTerminalReady(1);
 }
 //! [7]
 
@@ -138,4 +144,9 @@ void MainWindow::initActionsConnections()
 void MainWindow::showStatusMessage(const QString &message)
 {
     m_status->setText(message);
+}
+
+void MainWindow::dtrCtrl(bool opt)
+{
+    m_serial->setDataTerminalReady(opt);
 }
